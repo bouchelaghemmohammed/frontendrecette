@@ -1,3 +1,4 @@
+// src/api.js
 import axios from "axios";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:4000/api";
@@ -6,25 +7,30 @@ const api = axios.create({
   baseURL: API_BASE,
   headers: {
     "Content-Type": "application/json"
-  }
+  },
+  timeout: 15000
 });
 
-// helper to attach auth header if token exists
-function authHeaders() {
-  const token = localStorage.getItem("token");
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
+// request interceptor: attach token if present
+api.interceptors.request.use((config) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  } catch (e) {}
+  return config;
+});
 
-// Recipes
+// export helpers (they use baseURL so endpoints become <API_BASE>/auth/login etc.)
+export const signup = (data) => api.post("/auth/signup", data);
+export const login = (credentials) => api.post("/auth/login", credentials);
+
 export const getRecipes = () => api.get("/recipes");
 export const getRecipe = (id) => api.get(`/recipes/${id}`);
-export const createRecipe = (data) => api.post("/recipes", data, { headers: authHeaders() });
-export const updateRecipe = (id, data) => api.put(`/recipes/${id}`, data, { headers: authHeaders() });
-export const deleteRecipe = (id) => api.delete(`/recipes/${id}`, { headers: authHeaders() });
+export const createRecipe = (data) => api.post("/recipes", data);
+export const updateRecipe = (id, data) => api.put(`/recipes/${id}`, data);
+export const deleteRecipe = (id) => api.delete(`/recipes/${id}`);
 
-// Auth (example endpoints — adapte si ton backend a d'autres chemins)
-export const login = (credentials) => api.post("/auth/login", credentials);
-export const signup = (user) => api.post("/auth/signup", user);
-
-// Export axios instance if needed elsewhere
 export default api;
