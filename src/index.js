@@ -1,17 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
+import { AuthProvider } from "./components/AuthContext";
+import { NotificationProvider } from "./components/Notification";
+import "./index.css";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+/*
+  Safe index.js: no manual WebSocket creation here (avoid ws://localhost:3000/ws errors).
+  Wrap App with BrowserRouter, AuthProvider and NotificationProvider.
+*/
+
+const container = document.getElementById("root");
+const root = createRoot(container);
+
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <BrowserRouter>
+    <AuthProvider>
+      <NotificationProvider>
+        <App />
+      </NotificationProvider>
+    </AuthProvider>
+  </BrowserRouter>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
