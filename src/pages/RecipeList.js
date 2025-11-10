@@ -132,7 +132,7 @@ export default function RecipeList() {
               <div style={bodyStyle}>
                 <h3 style={{ margin: 0, fontSize: 18, lineHeight: 1.15 }}>{r.name}</h3>
 
-                {/* Category shown directly after the name */}
+                
                 {category ? (
                   <div style={{ color: "#4b5563", fontSize: 13, marginTop: 6 }}>{category}</div>
                 ) : null}

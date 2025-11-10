@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import * as api from "../api";
 
+// vérifier localStorage pour voir si un token/user existe déjà
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {

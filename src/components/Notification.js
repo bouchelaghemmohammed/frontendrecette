@@ -1,7 +1,17 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 
-const NotificationContext = createContext();
+// afficher des toasts d’erreur/succès.
 
+
+
+/*
+createContext : pour créer un contexte React (NotificationContext).
+useContext : pour consommer ce contexte via le hook useNotification.
+useState : pour stocker la liste des notifications à afficher.
+useCallback : pour mémoriser les fonctions remove et show (évite recréation à chaque rendu).
+*/
+
+const NotificationContext = createContext();
 export function useNotification() {
   return useContext(NotificationContext);
 }
@@ -13,6 +23,7 @@ export function NotificationProvider({ children }) {
     setItems((s) => s.filter((it) => it.id !== id));
   }, []);
 
+   // show pour afficher les nouvelles notifications
   const show = useCallback(({ type = "success", message = "", duration = 3500 }) => {
     const id = Math.random().toString(36).slice(2);
     setItems((s) => [...s, { id, type, message, duration }]);
@@ -20,6 +31,7 @@ export function NotificationProvider({ children }) {
   }, [remove]);
 
   return (
+   
     <NotificationContext.Provider value={{ show }}>
       {children}
 
