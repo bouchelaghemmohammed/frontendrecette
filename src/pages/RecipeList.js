@@ -116,7 +116,6 @@ export default function RecipeList() {
       <div style={gridStyle}>
         {recipes.map(r => {
           const rid = r.id || r._id;
-          const createdAt = r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "";
           return (
             <article
               key={rid}
@@ -141,9 +140,8 @@ export default function RecipeList() {
 
                 <div style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 6 }}>
                   <div style={{ background: "#eef2ff", color: "#3730a3", padding: "4px 8px", borderRadius: 999, fontSize: 13 }}>
-                    👩‍🍳 Auteur inconnu
+                    👩‍🍳 Auteur Mohammed
                   </div>
-                  {createdAt && <div style={{ color: "#64748b", fontSize: 13 }}>{createdAt}</div>}
                 </div>
 
                 <div style={footerStyle}>

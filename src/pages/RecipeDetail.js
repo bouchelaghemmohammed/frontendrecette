@@ -22,7 +22,15 @@ export default function RecipeDetail() {
     return () => { mounted = false; };
   }, [id]);
 
-  const handleDelete = async () => {
+  const handleEdit = (e) => {
+    e?.stopPropagation();
+    const rid = (recipe && (recipe.id || recipe._id)) || id;
+    if (!rid) return;
+    navigate(`/recipes/${rid}/edit`);
+  };
+
+  const handleDelete = async (e) => {
+    e?.stopPropagation();
     const rid = (recipe && (recipe.id || recipe._id)) || id;
     if (!rid) return;
     if (!window.confirm("Confirmer la suppression ?")) return;
@@ -39,7 +47,6 @@ export default function RecipeDetail() {
   if (loading) return <main className="container"><p className="muted">Chargement…</p></main>;
   if (!recipe) return <main className="container"><p className="muted">Recette introuvable.</p></main>;
 
-
   const author = "Auteur : Mohammed"; // manuellement pour le moment.
   const createdAt = recipe.createdAt ? new Date(recipe.createdAt).toLocaleString() : null;
 
@@ -52,7 +59,41 @@ export default function RecipeDetail() {
         <div style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
           <div className="author-badge">👩‍🍳 {author}</div>
           {createdAt && <div style={{ color: "var(--muted)", fontSize: 13 }}>{createdAt}</div>}
-         
+
+          {/* Buttons: Modifier (blue) and Supprimer (red) */}
+          <div style={{ display: "flex", gap: 8, marginLeft: 8 }}>
+            <button
+              onClick={handleEdit}
+              style={{
+                background: "#2563eb",
+                color: "#fff",
+                border: "none",
+                padding: "8px 12px",
+                borderRadius: 8,
+                cursor: "pointer",
+                fontWeight: 600
+              }}
+              aria-label="Modifier la recette"
+            >
+              Modifier
+            </button>
+
+            <button
+              onClick={handleDelete}
+              style={{
+                background: "#dc2626",
+                color: "#fff",
+                border: "none",
+                padding: "8px 12px",
+                borderRadius: 8,
+                cursor: "pointer",
+                fontWeight: 600
+              }}
+              aria-label="Supprimer la recette"
+            >
+              Supprimer
+            </button>
+          </div>
         </div>
       </div>
 
