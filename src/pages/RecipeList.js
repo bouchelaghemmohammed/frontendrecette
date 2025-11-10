@@ -1,17 +1,20 @@
 import React, { useEffect, useState, useContext } from "react";
 import { getRecipes, deleteRecipe } from "../api";
 import { useNavigate } from "react-router-dom";
-import { useNotification } from "../components/Notification";
 import { AuthContext } from "../components/AuthContext";
 
-/* keep your helpers (excerpt etc.) as before */
-
+/**
+ * RecipeList — grille de cartes avec images (design "comme avant").
+ * - Images affichées si existantes (sinon placeholder)
+ * - AFFICHE "Auteur inconnu"
+ * - Boutons Modifier / Supprimer visibles seulement pour le propriétaire
+ * - Click sur la carte -> détail
+ */
 export default function RecipeList() {
   const { user } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const notify = useNotification();
 
   useEffect(() => {
     let mounted = true;
@@ -24,17 +27,31 @@ export default function RecipeList() {
       })
       .catch(err => {
         console.error("getRecipes error:", err?.response || err);
-        if (!mounted) return;
-        setRecipes([]);
+        if (mounted) setRecipes([]);
       })
       .finally(() => mounted && setLoading(false));
     return () => { mounted = false; };
   }, []);
 
-  const isOwner = (recipe) => {
-    if (!recipe) return false;
+  const isOwner = (r) => {
+    if (!r) return false;
     if (!user || !user.id) return false;
-    return Number(recipe.userId) === Number(user.id);
+    return Number(r.userId) === Number(user.id);
+  };
+
+  const handleDelete = async (e, r) => {
+    e.stopPropagation();
+    const rid = r.id || r._id;
+    if (!rid) return;
+    if (!window.confirm("Supprimer cette recette ?")) return;
+    try {
+      await deleteRecipe(rid);
+      setRecipes(prev => prev.filter(item => (item.id || item._id) !== rid));
+      alert("Recette supprimée");
+    } catch (err) {
+      console.error(err);
+      alert(err?.response?.data?.message || "Échec suppression");
+    }
   };
 
   const handleEdit = (e, r) => {
@@ -44,46 +61,122 @@ export default function RecipeList() {
     navigate(`/recipes/${rid}/edit`);
   };
 
-  const handleDelete = async (e, r) => {
-    e.stopPropagation();
-    const rid = r.id || r._id;
-    if (!rid) return;
-    if (!window.confirm("Voulez-vous supprimer cette recette ?")) return;
-    try {
-      await deleteRecipe(rid);
-      setRecipes(prev => prev.filter(item => (item.id || item._id) !== rid));
-      if (notify && notify.show) notify.show({ type: "success", message: "Recette supprimée" });
-    } catch (err) {
-      console.error(err);
-      if (notify && notify.show) notify.show({ type: "error", message: err?.response?.data?.message || "Échec de la suppression" });
-    }
+  if (loading) return <main className="container"><p>Chargement…</p></main>;
+  if (!recipes.length) return <main className="container"><p>Aucune recette.</p></main>;
+
+  const gridStyle = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+    gap: 16
   };
 
-  if (loading) return <main className="container"><p className="muted">Chargement…</p></main>;
-  if (!recipes.length) return <main className="container"><p className="muted">Aucune recette.</p></main>;
+  const cardStyle = {
+    background: "#fff",
+    borderRadius: 12,
+    overflow: "hidden",
+    boxShadow: "0 6px 20px rgba(16,24,40,0.08)",
+    cursor: "pointer",
+    display: "flex",
+    flexDirection: "column",
+    minHeight: 240
+  };
+
+  const imgWrapStyle = {
+    width: "100%",
+    height: 160,
+    background: "#f3f4f6",
+    display: "block",
+    overflow: "hidden"
+  };
+
+  const imgStyle = {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    display: "block"
+  };
+
+  const bodyStyle = {
+    padding: 12,
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    flex: 1
+  };
+
+  const footerStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: "auto"
+  };
 
   return (
     <main className="container" style={{ paddingTop: 18 }}>
-      <div style={{ display: "grid", gap: 12 }}>
-        {recipes.map(r => (
-          <article key={r.id || r._id} className="card" onClick={() => navigate(`/recipes/${r.id || r._id}`)}>
-            <div className="card-body">
-              <h3>{r.name}</h3>
-              {/* No description displayed */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
-                <div className="author-badge">👩‍🍳 Auteur inconnu</div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  {isOwner(r) && (
-                    <>
-                      <button className="icon-btn" onClick={(e) => handleEdit(e, r)}>✏️</button>
-                      <button className="icon-btn danger" onClick={(e) => handleDelete(e, r)}>🗑️</button>
-                    </>
-                  )}
+      <div style={gridStyle}>
+        {recipes.map(r => {
+          const rid = r.id || r._id;
+          const createdAt = r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "";
+          return (
+            <article
+              key={rid}
+              style={cardStyle}
+              onClick={() => navigate(`/recipes/${rid}`)}
+              role="button"
+              aria-label={r.name || "Recette"}
+            >
+              <div style={imgWrapStyle}>
+                {r.imageUrl ? (
+                  // eslint-disable-next-line jsx-a11y/img-redundant-alt
+                  <img src={r.imageUrl} alt={r.name || "Image recette"} style={imgStyle} loading="lazy" />
+                ) : (
+                  <div style={{ ...imgStyle, display: "flex", alignItems: "center", justifyContent: "center", color: "#64748b", fontWeight: 600 }}>
+                    Pas d'image
+                  </div>
+                )}
+              </div>
+
+              <div style={bodyStyle}>
+                <h3 style={{ margin: 0, fontSize: 18, lineHeight: 1.15 }}>{r.name}</h3>
+
+                <div style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 6 }}>
+                  <div style={{ background: "#eef2ff", color: "#3730a3", padding: "4px 8px", borderRadius: 999, fontSize: 13 }}>
+                    👩‍🍳 Auteur inconnu
+                  </div>
+                  {createdAt && <div style={{ color: "#64748b", fontSize: 13 }}>{createdAt}</div>}
+                </div>
+
+                <div style={footerStyle}>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    {isOwner(r) && (
+                      <>
+                        <button
+                          onClick={(e) => handleEdit(e, r)}
+                          style={{ background: "#fff", border: "1px solid #e6e6e6", padding: "6px 8px", borderRadius: 8, cursor: "pointer" }}
+                        >
+                          ✏️
+                        </button>
+                        <button
+                          onClick={(e) => handleDelete(e, r)}
+                          style={{ background: "#fff", border: "1px solid #fee2e2", color: "#b91c1c", padding: "6px 8px", borderRadius: 8, cursor: "pointer" }}
+                        >
+                          🗑️
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={(e) => { e.stopPropagation(); navigate(`/recipes/${rid}`); }}
+                    style={{ background: "#3b82f6", color: "#fff", borderRadius: 8, padding: "6px 10px", border: "none", cursor: "pointer" }}
+                  >
+                    Voir
+                  </button>
                 </div>
               </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </div>
     </main>
   );
