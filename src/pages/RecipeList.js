@@ -69,6 +69,7 @@ export default function RecipeList() {
           <article key={r.id || r._id} className="card" onClick={() => navigate(`/recipes/${r.id || r._id}`)}>
             <div className="card-body">
               <h3>{r.name}</h3>
+              {/* No description displayed */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
                 <div className="author-badge">👩‍🍳 Auteur inconnu</div>
                 <div style={{ display: "flex", gap: 8 }}>
