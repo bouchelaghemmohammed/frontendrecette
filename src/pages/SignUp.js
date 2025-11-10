@@ -51,12 +51,12 @@ export default function SignUp() {
             <form onSubmit={handleSubmit}>
               <div className="form-field">
                 <label>Nom d'utilisateur</label>
-                <input className="input" value={username} onChange={e => setUsername(e.target.value)} placeholder="johndoe" />
+                <input className="input" value={username} onChange={e => setUsername(e.target.value)} placeholder="Mohammed" />
               </div>
 
               <div className="form-field">
                 <label>Mot de passe</label>
-                <input type="password" className="input" value={password} onChange={e => setPassword(e.target.value)} placeholder="Ton mot de passe" />
+                <input type="password" className="input" value={password} onChange={e => setPassword(e.target.value)} placeholder="***************" />
               </div>
 
               <div style={{ display: "flex", gap: 8 }}>
