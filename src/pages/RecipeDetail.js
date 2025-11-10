@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getRecipe, deleteRecipe } from "../api";
 import { useNotification } from "../components/Notification";
+import { AuthContext } from "../components/AuthContext";
 
 export default function RecipeDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const notify = useNotification();
+  const { user } = useContext(AuthContext);
 
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,8 +24,21 @@ export default function RecipeDetail() {
     return () => { mounted = false; };
   }, [id]);
 
+  const ownerIdFromRecipe = () => {
+    if (!recipe) return null;
+    // some backends use recipe.userId, others embed recipe.user.id
+    return recipe.userId ?? recipe.user?.id ?? null;
+  };
+
+  const isOwner = () => {
+    const ownerId = ownerIdFromRecipe();
+    if (!ownerId || !user || !user.id) return false;
+    return Number(ownerId) === Number(user.id);
+  };
+
   const handleEdit = (e) => {
     e?.stopPropagation();
+    if (!isOwner()) return;
     const rid = (recipe && (recipe.id || recipe._id)) || id;
     if (!rid) return;
     navigate(`/recipes/${rid}/edit`);
@@ -31,6 +46,7 @@ export default function RecipeDetail() {
 
   const handleDelete = async (e) => {
     e?.stopPropagation();
+    if (!isOwner()) return;
     const rid = (recipe && (recipe.id || recipe._id)) || id;
     if (!rid) return;
     if (!window.confirm("Confirmer la suppression ?")) return;
@@ -47,8 +63,32 @@ export default function RecipeDetail() {
   if (loading) return <main className="container"><p className="muted">Chargement…</p></main>;
   if (!recipe) return <main className="container"><p className="muted">Recette introuvable.</p></main>;
 
-  const author = "Auteur : Mohammed"; // manuellement pour le moment.
+  const author = "Auteur : Mohammed"; // temporaire si tu veux remplacer plus tard par recipe.user...
   const createdAt = recipe.createdAt ? new Date(recipe.createdAt).toLocaleString() : null;
+  const owner = isOwner();
+
+  const btnBase = {
+    padding: "8px 12px",
+    borderRadius: 8,
+    fontWeight: 600,
+    border: "none"
+  };
+
+  const editStyle = {
+    ...btnBase,
+    background: owner ? "#2563eb" : "#94a3b8",
+    color: "#fff",
+    cursor: owner ? "pointer" : "not-allowed",
+    opacity: owner ? 1 : 0.6
+  };
+
+  const deleteStyle = {
+    ...btnBase,
+    background: owner ? "#dc2626" : "#f1a1a1",
+    color: "#fff",
+    cursor: owner ? "pointer" : "not-allowed",
+    opacity: owner ? 1 : 0.6
+  };
 
   return (
     <main className="container" style={{ paddingTop: 18 }}>
@@ -60,19 +100,12 @@ export default function RecipeDetail() {
           <div className="author-badge">👩‍🍳 {author}</div>
           {createdAt && <div style={{ color: "var(--muted)", fontSize: 13 }}>{createdAt}</div>}
 
-          {/* Buttons: Modifier (blue) and Supprimer (red) */}
           <div style={{ display: "flex", gap: 8, marginLeft: 8 }}>
             <button
               onClick={handleEdit}
-              style={{
-                background: "#2563eb",
-                color: "#fff",
-                border: "none",
-                padding: "8px 12px",
-                borderRadius: 8,
-                cursor: "pointer",
-                fontWeight: 600
-              }}
+              disabled={!owner}
+              title={owner ? "Modifier la recette" : "Vous n'êtes pas autorisé"}
+              style={editStyle}
               aria-label="Modifier la recette"
             >
               Modifier
@@ -80,15 +113,9 @@ export default function RecipeDetail() {
 
             <button
               onClick={handleDelete}
-              style={{
-                background: "#dc2626",
-                color: "#fff",
-                border: "none",
-                padding: "8px 12px",
-                borderRadius: 8,
-                cursor: "pointer",
-                fontWeight: 600
-              }}
+              disabled={!owner}
+              title={owner ? "Supprimer la recette" : "Vous n'êtes pas autorisé"}
+              style={deleteStyle}
               aria-label="Supprimer la recette"
             >
               Supprimer

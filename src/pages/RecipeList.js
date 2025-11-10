@@ -3,13 +3,7 @@ import { getRecipes, deleteRecipe } from "../api";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/AuthContext";
 
-/**
- * RecipeList — grille de cartes avec images (design "comme avant").
- * - Images affichées si existantes (sinon placeholder)
- * - AFFICHE "Auteur inconnu"
- * - Boutons Modifier / Supprimer visibles seulement pour le propriétaire
- * - Click sur la carte -> détail
- */
+
 export default function RecipeList() {
   const { user } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
@@ -116,6 +110,7 @@ export default function RecipeList() {
       <div style={gridStyle}>
         {recipes.map(r => {
           const rid = r.id || r._id;
+          const category = r.category || "";
           return (
             <article
               key={rid}
@@ -126,7 +121,6 @@ export default function RecipeList() {
             >
               <div style={imgWrapStyle}>
                 {r.imageUrl ? (
-                  // eslint-disable-next-line jsx-a11y/img-redundant-alt
                   <img src={r.imageUrl} alt={r.name || "Image recette"} style={imgStyle} loading="lazy" />
                 ) : (
                   <div style={{ ...imgStyle, display: "flex", alignItems: "center", justifyContent: "center", color: "#64748b", fontWeight: 600 }}>
@@ -138,9 +132,14 @@ export default function RecipeList() {
               <div style={bodyStyle}>
                 <h3 style={{ margin: 0, fontSize: 18, lineHeight: 1.15 }}>{r.name}</h3>
 
-                <div style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 6 }}>
+                {/* Category shown directly after the name */}
+                {category ? (
+                  <div style={{ color: "#4b5563", fontSize: 13, marginTop: 6 }}>{category}</div>
+                ) : null}
+
+                <div style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 10 }}>
                   <div style={{ background: "#eef2ff", color: "#3730a3", padding: "4px 8px", borderRadius: 999, fontSize: 13 }}>
-                    👩‍🍳 Auteur Mohammed
+                    👩‍🍳 Auteur: Mohammed
                   </div>
                 </div>
 

@@ -13,9 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import { AuthContext } from "./components/AuthContext";
 
-/**
- * App : si user n'existe pas -> la racine "/" renvoie vers /login (plus d'ouverture directe /recipes)
- */
+
 export default function App() {
   const { user } = useContext(AuthContext);
 

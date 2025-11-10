@@ -11,7 +11,7 @@ const api = axios.create({
   timeout: 15000
 });
 
-// request interceptor: attach token if present
+// attacher token si il est  present
 api.interceptors.request.use((config) => {
   try {
     const token = localStorage.getItem("token");
@@ -23,7 +23,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// export helpers (they use baseURL so endpoints become <API_BASE>/auth/login etc.)
+
 export const signup = (data) => api.post("/auth/signup", data);
 export const login = (credentials) => api.post("/auth/login", credentials);
 

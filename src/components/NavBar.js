@@ -20,10 +20,6 @@ export default function NavBar() {
           <span style={{ fontSize: 28 }}>🍽️</span>
           <span style={{ marginLeft: 6, fontSize: 20 }}>Recette App</span>
         </div>
-
-        {/*
-          "Ajouter" only visible if authenticated
-        */}
         {user && (
           <button type="button" className="btn secondary" onClick={goAdd} aria-label="Ajouter une recette">
             ➕ Ajouter
@@ -34,7 +30,6 @@ export default function NavBar() {
       <div className="nav-right" style={{ alignItems: "center" }}>
         {user ? (
           <>
-            {/* profile-like button (does not navigate) */}
             <button type="button" className="btn secondary" style={{ display: "flex", alignItems: "center", gap: 8 }} onClick={() => {}}>
               <span style={{ fontSize: 18 }}>👤</span>
               <span>{user.username}</span>

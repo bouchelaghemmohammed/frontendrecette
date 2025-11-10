@@ -88,9 +88,7 @@ p, pre, li { font-size:15px; line-height:1.6; color:#253047; margin:0 0 12px; }
 .form-field { display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
 .form-field label { font-size:13px; color:#334155; font-weight:600; }
 
-/* AUTH layout - left edge aligned with .container
-   auth-card is inside .container so it starts at same X as navbar content.
-*/
+
 .auth-page { min-height: calc(100vh - 84px); padding: 28px 0 48px; background: var(--bg); }
 .auth-card {
   max-width: 1100px;
@@ -98,7 +96,7 @@ p, pre, li { font-size:15px; line-height:1.6; color:#253047; margin:0 0 12px; }
   margin: 18px auto 0;
   display:flex;
   gap:28px;
-  align-items:stretch; /* force hero to match form height */
+  align-items:stretch; 
 }
 
 /* auth form */
@@ -299,10 +297,10 @@ p, pre, li { font-size:15px; line-height:1.6; color:#253047; margin:0 0 12px; }
   border:1px solid rgba(37,99,235,0.04);
 }
 
-/* Ensure recipe-card content ordering looks good */
+
 .recipe-card .body img { border-radius: 8px; }
 
-/* On larger screens, keep cards in grid but make footer actions clearly at right */
+
 @media(min-width:900px) {
   .card-footer { padding-right: 8px; }
 }

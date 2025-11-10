@@ -6,11 +6,6 @@ import { AuthProvider } from "./components/AuthContext";
 import { NotificationProvider } from "./components/Notification";
 import "./index.css";
 
-/*
-  Safe index.js: no manual WebSocket creation here (avoid ws://localhost:3000/ws errors).
-  Wrap App with BrowserRouter, AuthProvider and NotificationProvider.
-*/
-
 const container = document.getElementById("root");
 const root = createRoot(container);
 

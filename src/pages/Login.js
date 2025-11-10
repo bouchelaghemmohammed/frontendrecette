@@ -3,10 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../components/AuthContext";
 import { useNotification } from "../components/Notification";
 
-/**
- * Login: form aligned with the left edge of the navbar (.container)
- * Form uses modern .input fields and bigger, centered composition.
- */
 export default function Login() {
   const { login } = useContext(AuthContext);
   const notify = useNotification();

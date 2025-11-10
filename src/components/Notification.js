@@ -1,9 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 
-/**
- * NotificationProvider -> show({ type: "success"|"error", message, duration })
- * Rendu: bannière positionnée à droite (top-right), style identique à la maquette.
- */
 const NotificationContext = createContext();
 
 export function useNotification() {
