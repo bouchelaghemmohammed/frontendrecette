@@ -41,10 +41,7 @@ export default function AddRecipe() {
           <input className="input" value={form.category} onChange={handleChange("category")} />
         </div>
 
-        <div className="form-field">
-          <label>Description</label>
-          <textarea className="input" value={form.description} onChange={handleChange("description")} rows={4} />
-        </div>
+        
 
         <div className="form-field">
           <label>Ingrédients</label>
