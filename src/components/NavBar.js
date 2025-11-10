@@ -31,7 +31,7 @@ export default function NavBar() {
         {user ? (
           <>
             <button type="button" className="btn secondary" style={{ display: "flex", alignItems: "center", gap: 8 }} onClick={() => {}}>
-              <span style={{ fontSize: 18 }}>👤</span>
+              <span style={{ fontSize: 18 }}>👨‍🍳</span>
               <span>{user.username}</span>
             </button>
 
