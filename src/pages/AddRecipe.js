@@ -55,7 +55,7 @@ export default function AddRecipe() {
 
         <div className="form-field">
           <label>Image (URL)</label>
-          <input className="input" value={form.imageUrl} onChange={handleChange("imageUrl")} placeholder="/images/monimage.jpg or https://..." />
+          <input className="input" value={form.imageUrl} onChange={handleChange("imageUrl")} placeholder="https://..." />
         </div>
 
         <div style={{ display: "flex", gap: 8 }}>
